@@ -24,8 +24,8 @@ html_chaff = ['<!DOCTYPE html>',
               '<title>Weather Information</title>',
               '</head>',
               '<body>',
-              '<h1>Leave me Alone!</h1>',
-              '<p>I hate all of you</p>']
+              '<h1>Weather Consolidator</h1>',
+              '<p></p>']
 
 html_table_start = '<table border="1" style="width:100%">'
 html_table_header_start_tag = '<th>'
@@ -104,9 +104,18 @@ for places in coordinates:
         year, month, day = sdate.split('-')
         stime, tz = stime.split('-')
         hour, minute, second = stime.split(':')
+        
+        ihour = int(hour)
+        if (ihour >=0 and ihour<6):
+            ihour = 18
+        if (ihour >= 6 and ihour <18):
+            ihour = 6
+        if (ihour >= 18 and ihour <=23):
+            ihour = 18
+            
 #        print(year, month, day, hour, minute, second)
         start_dt = datetime.datetime(int(year), int(month), int(day), 
-                                     int(hour), int(minute), int(second))
+                                     ihour, int(minute), int(second))
         if start_dt not in dt_list:
             dt_list.append(start_dt)
 #        print(start_dt)
@@ -135,8 +144,17 @@ weather_file.write('\n')
 
 for dt in dt_list:
     weather_file.write(html_table_header_start_tag)
-    weather_file.write(dt.strftime('%a') + '</br>' + dt.strftime('%d %b') + 
-                       '</br>' + dt.strftime('%H%M'))
+#    weather_file.write(dt.strftime('%a') + '</br>' + dt.strftime('%d %b') + 
+#                       '</br>' + dt.strftime('%H%M'))
+    if ((dt.hour >= 0) and (dt.hour < 6)):
+        strdate ='Night'
+    elif ((dt.hour >= 6) and (dt.hour < 18)):
+        strdate = 'Day'
+    elif ((dt.hour >= 18) and (dt.hour <= 23)):
+        strdate = 'Night'
+        
+    weather_file.write(dt.strftime('%a') + '</br>' + strdate + '</br>' + 
+                       dt.strftime('%d %b') )
     weather_file.write(html_table_header_end_tag)
     weather_file.write('\n')
 
