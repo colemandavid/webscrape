@@ -10,6 +10,9 @@ import json
 import datetime
 
 
+raw_data = False
+small_images = False
+
 
 weekday_list = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 dt_list = []
@@ -52,34 +55,41 @@ coordinates = [['Silverdale',47.6966153,-122.6709335],
                ['Norfolk',36.8132967,-76.2892189],
                ['Washington, DC',38.89378,-77.1546627],
                ['Manassas',38.7447207,-77.5221135],
-               ['Winston-Salem',36.1047679,-80.383545]]
+               ['Winston-Salem',36.1047679,-80.383545],
+               ['Boise',43.6028311,-116.203961],
+               ['Pateros',48.0559732,-119.9155396]]
 
 api_url = 'https://api.weather.gov/points/'
 
 html_filename = 'weather.html'
 
-raw_file = open('rawdata.txt', 'w')
+if raw_data:
+    raw_file = open('rawdata.txt', 'w')
+    
 # open the file and write most HTML stuff in it
 
 for places in coordinates:
 
     url = api_url + str(places[1]) + ',' + str(places[2])
     print(url)
-    raw_file.write(url)
-    raw_file.write('\n')
+    if raw_data:
+        raw_file.write(url)
+        raw_file.write('\n')
     
     res = requests.get(url)
 #    print(res.status_code)
 #    print(res.text)
-    raw_file.write(res.text)
-    raw_file.write('\n')
+    if (raw_data):
+        raw_file.write(res.text)
+        raw_file.write('\n')
     
     parsed_json = json.loads(res.text)
     forecast_url = parsed_json['properties']['forecast']
     print('forecast_url: ' + forecast_url)
 
-    raw_file.write('forecast_url: ' + forecast_url)
-    raw_file.write('\n')
+    if (raw_data):
+        raw_file.write('forecast_url: ' + forecast_url)
+        raw_file.write('\n')
     
     city = parsed_json['properties']['relativeLocation']['properties']['city']
     print(city)
@@ -90,8 +100,9 @@ for places in coordinates:
     if res2.status_code != 200:
         continue
 #    print(res2.text)
-    raw_file.write(res2.text)
-    raw_file.write('\n')
+    if (raw_data):
+        raw_file.write(res2.text)
+        raw_file.write('\n')
     
     pj2 = json.loads(res2.text)
     
@@ -122,6 +133,8 @@ for places in coordinates:
         temp = pj2['properties']['periods'][i]['temperature']
         short = pj2['properties']['periods'][i]['shortForecast']
         image = pj2['properties']['periods'][i]['icon']
+        if small_images:
+            image = image.replace('medium', 'small')
         data_stuff[places[0]][start_dt] = [temp, short, image]
 # close out the table
 
@@ -240,7 +253,8 @@ for end_stuff in html_end:
     weather_file.write('\n')
     
 weather_file.close()
-raw_file.close()
+if (raw_data):
+    raw_file.close()
 
 # print(data_stuff)
     

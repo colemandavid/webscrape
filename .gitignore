@@ -102,3 +102,12 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+# misc
+
+weather.html
+rawdata.txt
+.gitignore~
+..gitignore.un~
+*.html
+.gitignore.swp
